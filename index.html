@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover">
+<title>رواد المشاعر — عروض الأسعار والمقايسات</title>
+<meta name="theme-color" content="#0b4f9c">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="رواد المشاعر">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="icon" type="image/png" href="favicon.png">
+<style>
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html,body{margin:0;height:100%;overflow:hidden;font-family:Arial,"Segoe UI",Tahoma,sans-serif;background:#eef2f7}
+  #top{position:fixed;top:0;left:0;right:0;height:env(safe-area-inset-top,0px);background:#0b4f9c;z-index:3}
+  #bot{position:fixed;bottom:0;left:0;right:0;height:env(safe-area-inset-bottom,0px);background:#fff;z-index:3}
+  #app{position:fixed;left:0;right:0;top:env(safe-area-inset-top,0px);bottom:env(safe-area-inset-bottom,0px);width:100%;height:calc(100% - env(safe-area-inset-top,0px) - env(safe-area-inset-bottom,0px));border:0;display:block;background:#eef2f7}
+  .full{position:fixed;inset:0;z-index:5;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:24px;
+        padding-top:calc(24px + env(safe-area-inset-top,0px));padding-bottom:calc(24px + env(safe-area-inset-bottom,0px));background:#fff}
+  .lg{display:flex;gap:18px;align-items:center;justify-content:center;margin-bottom:14px}
+  .lg img{height:72px}
+  .co{color:#667085;font-size:15px;margin-bottom:4px}
+  .app{color:#0b4f9c;font-size:20px;font-weight:bold}
+  .dots{margin-top:26px;display:flex;gap:8px}
+  .dots i{width:10px;height:10px;border-radius:50%;background:#0b4f9c;opacity:.25;animation:b 1s infinite}
+  .dots i:nth-child(2){animation-delay:.15s}.dots i:nth-child(3){animation-delay:.3s}
+  @keyframes b{50%{opacity:1}}
+  .hide{display:none!important}
+  /* visitor (client scanned a sticker without being logged in) */
+  .unit{margin:22px 0 6px;font-size:17px;color:#172033}
+  .unit b{font-size:26px;color:#0b4f9c;display:block;margin-top:4px;direction:ltr}
+  .call{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;max-width:360px;margin-top:22px;padding:18px;border-radius:16px;
+        background:#c0392b;color:#fff;font-size:20px;font-weight:bold;text-decoration:none;box-shadow:0 6px 18px rgba(192,57,43,.3)}
+  .call small{display:block;font-size:14px;font-weight:normal;opacity:.95}
+  .note{color:#667085;font-size:14px;margin-top:12px;line-height:1.7}
+  .staff{margin-top:34px;background:none;border:1.5px solid #0b4f9c;color:#0b4f9c;border-radius:14px;padding:12px 22px;font-size:15px;font-family:inherit}
+  /* install hint */
+  #hint{position:fixed;left:10px;right:10px;bottom:calc(86px + env(safe-area-inset-bottom,0px));z-index:6;background:#172033;color:#fff;border-radius:16px;padding:14px 16px;
+        font-size:14.5px;line-height:1.7;box-shadow:0 8px 24px rgba(0,0,0,.25)}
+  #hint b{color:#ffd166}
+  #hint button{position:absolute;top:6px;left:8px;background:none;border:0;color:#fff;font-size:22px;padding:4px 8px}
+</style>
+<script src="config.js"></script>
+</head>
+<body>
+<div id="top"></div>
+
+<!-- splash -->
+<div id="splash" class="full">
+  <div class="lg"><img src="logo-e.png" alt=""><img src="logo-s.png" alt=""></div>
+  <div class="co">شركة رواد المشاعر لأجهزة السلامة والمصاعد</div>
+  <div class="app">تطبيق عروض الأسعار والمقايسات</div>
+  <div class="dots"><i></i><i></i><i></i></div>
+</div>
+
+<!-- visitor page (sticker scanned by someone not logged in) -->
+<div id="visitor" class="full hide">
+  <div class="lg"><img src="logo-e.png" alt=""><img src="logo-s.png" alt=""></div>
+  <div class="co">شركة رواد المشاعر لأجهزة السلامة والمصاعد</div>
+  <div class="unit" id="vUnit"></div>
+  <a class="call" id="vCall" href="#"><span>📞</span><span>اتصال طوارئ<small id="vNum"></small></span></a>
+  <div class="note">خدمة الأعطال والطوارئ على مدار الساعة</div>
+  <button class="staff" onclick="openApp()">دخول فريق العمل</button>
+</div>
+
+<iframe id="app" class="hide" title="عروض الأسعار" allow="camera; clipboard-write; geolocation"></iframe>
+<div id="bot"></div>
+
+<div id="hint" class="hide">
+  <button onclick="hideHint()">×</button>
+  <div id="hintTxt"></div>
+</div>
+
+<script>
+var KEY='rq_token', HINT='rq_hint_done';
+function lsGet(k){ try{ return localStorage.getItem(k); }catch(e){ return null; } }
+function lsSet(k,v){ try{ localStorage.setItem(k,v); }catch(e){} }
+function lsDel(k){ try{ localStorage.removeItem(k); }catch(e){} }
+function ssGet(k){ try{ return sessionStorage.getItem(k); }catch(e){ return null; } }
+function ssSet(k,v){ try{ sessionStorage.setItem(k,v); }catch(e){} }
+function ssDel(k){ try{ sessionStorage.removeItem(k); }catch(e){} }
+function $(i){ return document.getElementById(i); }
+function token(){ return lsGet(KEY) || ssGet(KEY) || ''; }
+
+// sticker params: ?e=1001 (elevator) or ?b=S017 (safety building)
+var P = new URLSearchParams(location.search);
+var QE = (P.get('e')||'').replace(/\D/g,'').slice(0,6);
+var QB = (P.get('b')||'').toUpperCase().replace(/[^A-Z0-9]/g,'').slice(0,6);
+
+function openApp(){
+  $('visitor').classList.add('hide'); $('splash').classList.remove('hide');
+  var u = APP_URL + '?w=1' + (QE?'&e='+QE:'') + (QB?'&b='+QB:'');
+  var f=$('app'); f.src=u; f.classList.remove('hide');
+  // drop the sticker params from the address so a refresh doesn't reopen the same building
+  if(QE||QB){ try{ history.replaceState(null,'',location.pathname); }catch(e){} }
+  setTimeout(function(){ $('splash').classList.add('hide'); }, 12000); // safety net
+}
+
+function showVisitor(){
+  $('splash').classList.add('hide');
+  $('vUnit').innerHTML = QE ? 'مصعد رقم<b>'+QE+'</b>' : 'مبنى رقم<b>'+parseInt(QB.replace(/\D/g,''),10)+'</b>';
+  $('vNum').textContent = EMERGENCY; $('vCall').href = 'tel:'+EMERGENCY;
+  $('visitor').classList.remove('hide');
+}
+
+// messages from the app inside the frame
+window.addEventListener('message', function(ev){
+  var o = ev.origin || '';
+  if(!/^https:\/\/[a-z0-9-]+\.googleusercontent\.com$/.test(o) && o!=='https://script.google.com') return;
+  var d = ev.data || {};
+  if(d.rq==='ready'){
+    ev.source.postMessage({rq:'init', token: token()}, o);
+    $('splash').classList.add('hide');
+  } else if(d.rq==='token' && d.token){
+    if(d.remember){ lsSet(KEY,d.token); ssDel(KEY); } else { ssSet(KEY,d.token); lsDel(KEY); }
+    maybeHint();
+  } else if(d.rq==='logout'){
+    lsDel(KEY); ssDel(KEY);
+  }
+});
+
+// one-time tip: add the icon to the home screen
+function standalone(){ return (window.matchMedia && matchMedia('(display-mode: standalone)').matches) || window.navigator.standalone===true; }
+function maybeHint(){
+  if(standalone() || lsGet(HINT)) return;
+  var ios = /iphone|ipad|ipod/i.test(navigator.userAgent);
+  $('hintTxt').innerHTML = ios
+    ? 'ثبّت التطبيق على الشاشة الرئيسية:<br>اضغط <b>مشاركة ⬆︎</b> تحت، وبعدين <b>إضافة إلى الشاشة الرئيسية</b>.'
+    : 'ثبّت التطبيق على الشاشة الرئيسية:<br>اضغط <b>⋮</b> فوق، وبعدين <b>تثبيت التطبيق</b> أو <b>إضافة إلى الشاشة الرئيسية</b>.';
+  $('hint').classList.remove('hide');
+}
+function hideHint(){ $('hint').classList.add('hide'); lsSet(HINT,'1'); }
+
+// start
+if((QE||QB) && !token()) showVisitor(); else openApp();
+
+if('serviceWorker' in navigator){ try{ navigator.serviceWorker.register('sw.js'); }catch(e){} }
+</script>
+</body>
+</html>
