@@ -89,13 +89,14 @@ function token(){ return lsGet(KEY) || ssGet(KEY) || ''; }
 var P = new URLSearchParams(location.search);
 var QE = (P.get('e')||'').replace(/\D/g,'').slice(0,6);
 var QB = (P.get('b')||'').toUpperCase().replace(/[^A-Z0-9]/g,'').slice(0,6);
+var QQ = (P.get('q')||'').toUpperCase().replace(/[^A-Z0-9-]/g,'').slice(0,24); // a quote code (link sent to Ali)
 
 function openApp(){
   $('visitor').classList.add('hide'); $('splash').classList.remove('hide');
-  var u = APP_URL + '?w=1' + (QE?'&e='+QE:'') + (QB?'&b='+QB:'');
+  var u = APP_URL + '?w=1' + (QE?'&e='+QE:'') + (QB?'&b='+QB:'') + (QQ?'&q='+QQ:'');
   var f=$('app'); f.src=u; f.classList.remove('hide');
   // drop the sticker params from the address so a refresh doesn't reopen the same building
-  if(QE||QB){ try{ history.replaceState(null,'',location.pathname); }catch(e){} }
+  if(QE||QB||QQ){ try{ history.replaceState(null,'',location.pathname); }catch(e){} }
   setTimeout(function(){ $('splash').classList.add('hide'); }, 12000); // safety net
 }
 
