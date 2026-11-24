@@ -155,7 +155,7 @@ $('shareGo').onclick = function(){
   if(!SHARE) return;
   var s = SHARE;
   if(navigator.canShare && navigator.canShare({files:[s.file]})){
-    navigator.share({files:[s.file], text:s.text}).then(function(){ closeShare(true); }).catch(function(){ closeShare(false); });
+    navigator.share(s.text ? {files:[s.file], text:s.text} : {files:[s.file]}).then(function(){ closeShare(true); }).catch(function(){ closeShare(false); });
   } else {
     var u = URL.createObjectURL(s.file), a = document.createElement('a');
     a.href = u; a.download = s.file.name; document.body.appendChild(a); a.click();
