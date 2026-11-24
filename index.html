@@ -69,6 +69,17 @@
 <iframe id="app" class="hide" title="عروض الأسعار" allow="camera; clipboard-write; geolocation"></iframe>
 <div id="bot"></div>
 
+<!-- share the real PDF (the app asks; the tap must happen on this main page) -->
+<div id="shareBox" class="full hide" style="background:rgba(23,32,51,.55);z-index:7">
+  <div style="background:#fff;border-radius:18px;padding:20px;width:100%;max-width:380px">
+    <div style="font-size:18px;font-weight:bold;color:#0b4f9c;margin-bottom:6px">الملف جاهز</div>
+    <div id="shareName" style="color:#667085;font-size:14px;margin-bottom:14px;word-break:break-all"></div>
+    <button id="shareGo" style="width:100%;padding:16px;border:0;border-radius:14px;background:#1b7a43;color:#fff;font-size:18px;font-weight:bold;font-family:inherit">مشاركة الملف</button>
+    <button onclick="closeShare(false)" style="width:100%;padding:12px;margin-top:10px;border:1.5px solid #0b4f9c;border-radius:14px;background:#fff;color:#0b4f9c;font-size:16px;font-family:inherit">رجوع</button>
+    <div id="shareNote" style="color:#667085;font-size:13px;margin-top:10px;line-height:1.6">هتفتح قايمة المشاركة — اختار واتساب وبعدين العميل.</div>
+  </div>
+</div>
+
 <div id="hint" class="hide">
   <button onclick="hideHint()">×</button>
   <div id="hintTxt"></div>
@@ -120,8 +131,43 @@ window.addEventListener('message', function(ev){
     maybeHint();
   } else if(d.rq==='logout'){
     lsDel(KEY); ssDel(KEY);
+  } else if(d.rq==='share' && d.b64){
+    openShare(d, ev.source, o);
   }
 });
+
+var SHARE = null;
+function openShare(d, src, origin){
+  var file;
+  try{
+    var bin = atob(d.b64), arr = new Uint8Array(bin.length);
+    for(var i=0;i<bin.length;i++) arr[i] = bin.charCodeAt(i);
+    file = new File([arr], d.name || 'quote.pdf', {type:'application/pdf'});
+  }catch(e){ src.postMessage({rq:'shared', ok:false}, origin); return; }
+  SHARE = {file:file, text:d.text||'', src:src, origin:origin};
+  $('shareName').textContent = file.name;
+  var can = navigator.canShare && navigator.canShare({files:[file]});
+  $('shareGo').textContent = can ? 'مشاركة الملف' : 'تحميل الملف';
+  $('shareNote').textContent = can ? 'هتفتح قايمة المشاركة — اختار واتساب وبعدين العميل.' : 'الجهاز ده مش بيدعم مشاركة الملفات — هيتحمّل الملف وابعته انت.';
+  $('shareBox').classList.remove('hide');
+}
+$('shareGo').onclick = function(){
+  if(!SHARE) return;
+  var s = SHARE;
+  if(navigator.canShare && navigator.canShare({files:[s.file]})){
+    navigator.share({files:[s.file], text:s.text}).then(function(){ closeShare(true); }).catch(function(){ closeShare(false); });
+  } else {
+    var u = URL.createObjectURL(s.file), a = document.createElement('a');
+    a.href = u; a.download = s.file.name; document.body.appendChild(a); a.click();
+    setTimeout(function(){ URL.revokeObjectURL(u); a.remove(); }, 4000);
+    closeShare(false);
+  }
+};
+function closeShare(ok){
+  $('shareBox').classList.add('hide');
+  if(SHARE){ try{ SHARE.src.postMessage({rq:'shared', ok:!!ok}, SHARE.origin); }catch(e){} }
+  SHARE = null;
+}
 
 // one-time tip: add the icon to the home screen
 function standalone(){ return (window.matchMedia && matchMedia('(display-mode: standalone)').matches) || window.navigator.standalone===true; }
@@ -135,8 +181,30 @@ function maybeHint(){
 }
 function hideHint(){ $('hint').classList.add('hide'); lsSet(HINT,'1'); }
 
+// a client's quote link: …/?pdf=CODE&k=KEY → always opens the latest PDF of that quote
+var QPDF = (P.get('pdf')||'').toUpperCase().replace(/[^A-Z0-9-]/g,'').slice(0,24);
+var QK = (P.get('k')||'').replace(/[^A-Za-z0-9]/g,'').slice(0,20);
+function openPdf(){
+  $('splash').querySelector('.app').textContent = 'جاري فتح عرض السعر…';
+  fetch(APP_URL + '?api=pdf&code=' + encodeURIComponent(QPDF) + '&k=' + encodeURIComponent(QK))
+    .then(function(r){ return r.json(); })
+    .then(function(d){
+      if(d.ok){ location.replace(d.url); return; }
+      pdfError(d.error || 'الرابط ده مش شغال', d.phone || EMERGENCY);
+    })
+    .catch(function(){ pdfError('مفيش اتصال — جرّب تاني بعد شوية', EMERGENCY); });
+}
+function pdfError(m, phone){
+  $('splash').classList.add('hide');
+  $('vUnit').innerHTML = m.replace(/</g,'&lt;');
+  $('vNum').textContent = phone; $('vCall').href = 'tel:' + phone;
+  $('visitor').querySelector('.staff').classList.add('hide');
+  $('visitor').classList.remove('hide');
+}
+
 // start
-if((QE||QB) && !token()) showVisitor(); else openApp();
+if(QPDF && QK) openPdf();
+else if((QE||QB) && !token()) showVisitor(); else openApp();
 
 if('serviceWorker' in navigator){ try{ navigator.serviceWorker.register('sw.js'); }catch(e){} }
 </script>
