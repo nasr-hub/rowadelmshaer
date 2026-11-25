@@ -43,6 +43,50 @@
         font-size:14.5px;line-height:1.7;box-shadow:0 8px 24px rgba(0,0,0,.25)}
   #hint b{color:#ffd166}
   #hint button{position:absolute;top:6px;left:8px;background:none;border:0;color:#fff;font-size:22px;padding:4px 8px}
+  /* client quote page */
+  #qp{position:fixed;inset:0;z-index:5;overflow:auto;background:linear-gradient(180deg,#0b4f9c 0,#0b4f9c 210px,#eef2f7 210px);
+      padding:calc(18px + env(safe-area-inset-top,0px)) 16px calc(24px + env(safe-area-inset-bottom,0px));font-family:Arial,Tahoma,sans-serif;color:#172033}
+  #qp.S{background:linear-gradient(180deg,#9e2a20 0,#9e2a20 210px,#f6eeed 210px)}
+  .qw{max-width:460px;margin:0 auto}
+  .qh{display:flex;align-items:center;gap:12px;color:#fff;margin-bottom:16px;animation:qIn .5s both}
+  .qh img{height:54px;background:#fff;border-radius:14px;padding:6px}
+  .qh b{display:block;font-size:17px}.qh span{font-size:13px;opacity:.85}
+  .qc{background:#fff;border-radius:22px;padding:20px 18px;box-shadow:0 12px 40px rgba(16,24,40,.18);animation:qIn .55s .08s both}
+  .qt{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+  .qt .tg{font-size:13px;font-weight:bold;color:#0b4f9c;background:#e8f0fb;border-radius:20px;padding:4px 12px}
+  #qp.S .qt .tg{color:#9e2a20;background:#fbeceb}
+  .qt .cd{direction:ltr;font-size:13px;color:#667085}
+  .qcl{font-size:21px;font-weight:bold;margin:4px 0 2px}
+  .qloc{color:#667085;font-size:14.5px;margin-bottom:14px}
+  .qtot{background:#f4f7fb;border-radius:16px;padding:14px;text-align:center;margin-bottom:6px}
+  .qtot small{display:block;color:#667085;font-size:13px}
+  .qtot b{font-size:34px;color:#0b4f9c;letter-spacing:.5px}
+  #qp.S .qtot b{color:#9e2a20}
+  .qtot i{font-style:normal;font-size:15px;color:#667085}
+  .qmeta{display:flex;justify-content:space-between;color:#667085;font-size:13.5px;margin:10px 4px 4px}
+  .qb{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;border:0;border-radius:16px;padding:16px;font-size:18px;font-weight:bold;
+      font-family:inherit;margin-top:12px;text-decoration:none;transition:transform .12s;animation:qIn .5s both}
+  .qb:active{transform:scale(.97)}
+  .qb.pdf{background:#fff;color:#0b4f9c;border:2px solid #0b4f9c;animation-delay:.16s}
+  #qp.S .qb.pdf{color:#9e2a20;border-color:#9e2a20}
+  .qb.ok{background:#1b7a43;color:#fff;box-shadow:0 8px 22px rgba(27,122,67,.35);animation-delay:.22s}
+  .qb.wa{background:#e9f8ef;color:#13703a;animation-delay:.28s;font-size:16px}
+  .qb.tel{background:transparent;color:#667085;font-size:15px;font-weight:normal;padding:10px;animation-delay:.32s}
+  .qok{background:#e9f8ef;border:1.5px solid #9fd9b5;color:#13703a;border-radius:16px;padding:14px;text-align:center;margin-top:14px;font-size:15.5px;line-height:1.7;animation:qIn .5s both}
+  .qok b{font-size:19px;display:block}
+  .qex{background:#fff4e0;border:1.5px solid #f3d39b;color:#8a5a00;border-radius:16px;padding:12px 14px;margin-top:14px;font-size:15px;line-height:1.7}
+  .qsheet{position:fixed;inset:0;z-index:8;background:rgba(23,32,51,.55);display:flex;align-items:flex-end;justify-content:center}
+  .qsheet>div{background:#fff;width:100%;max-width:480px;border-radius:22px 22px 0 0;padding:22px 18px calc(18px + env(safe-area-inset-bottom,0px));animation:qUp .32s cubic-bezier(.2,.9,.3,1.1)}
+  .qsheet h3{margin:0 0 6px;color:#1b7a43;font-size:20px}
+  .qsheet p{margin:0 0 12px;color:#3b4a63;line-height:1.7;font-size:15px}
+  .qsheet input{width:100%;padding:14px;border:1.5px solid #d5dbe5;border-radius:14px;font-size:16px;font-family:inherit}
+  .qsheet .no{background:#fff;color:#667085;border:1.5px dashed #c9d1dd;font-size:16px}
+  .qdone{text-align:center;padding:10px 0}
+  .qdone .ck{width:92px;height:92px;border-radius:50%;background:#1b7a43;color:#fff;font-size:52px;line-height:92px;margin:0 auto 12px;animation:pop .5s cubic-bezier(.2,.9,.3,1.4) both}
+  .qft{text-align:center;color:#98a2b3;font-size:12.5px;margin-top:18px}
+  @keyframes qIn{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+  @keyframes qUp{from{transform:translateY(100%)}to{transform:none}}
+  @keyframes pop{from{transform:scale(.3);opacity:0}to{transform:scale(1);opacity:1}}
 </style>
 <script src="config.js"></script>
 </head>
@@ -81,6 +125,9 @@
     <div id="shareNote" style="color:#667085;font-size:13px;margin-top:10px;line-height:1.6">هتفتح قايمة المشاركة — اختار واتساب وبعدين العميل.</div>
   </div>
 </div>
+
+<div id="qp" class="hide"><div class="qw" id="qpw"></div></div>
+<div id="qs" class="qsheet hide" onclick="if(event.target===this)qClose()"><div id="qsb"></div></div>
 
 <div id="hint" class="hide">
   <button onclick="hideHint()">×</button>
@@ -186,15 +233,65 @@ function hideHint(){ $('hint').classList.add('hide'); lsSet(HINT,'1'); }
 // a client's quote link: …/?pdf=CODE&k=KEY → always opens the latest PDF of that quote
 var QPDF = (P.get('pdf')||'').toUpperCase().replace(/[^A-Z0-9-]/g,'').slice(0,24);
 var QK = (P.get('k')||'').replace(/[^A-Za-z0-9]/g,'').slice(0,20);
+var QD = null;
 function openPdf(){
   $('splash').querySelector('.app').textContent = 'جاري فتح عرض السعر…';
   fetch(APP_URL + '?api=pdf&code=' + encodeURIComponent(QPDF) + '&k=' + encodeURIComponent(QK))
     .then(function(r){ return r.json(); })
     .then(function(d){
-      if(d.ok){ location.replace(d.url); return; }
-      pdfError(d.error || 'الرابط ده مش شغال', d.phone || EMERGENCY);
+      if(!d.ok) return pdfError(d.error || 'الرابط ده مش شغال', d.phone || EMERGENCY);
+      if(!d.client){ location.replace(d.url); return; }   // older server: straight to the PDF
+      QD = d; showQuote();
     })
     .catch(function(){ pdfError('مفيش اتصال — جرّب تاني بعد شوية', EMERGENCY); });
+}
+function esc(x){ return String(x==null?'':x).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];}); }
+function money(n){ n=Number(n)||0; return n.toLocaleString('en-US',{minimumFractionDigits:n%1?2:0,maximumFractionDigits:2}); }
+function waLink(txt){ return 'https://wa.me/' + (QD.wa||'') + '?text=' + encodeURIComponent(txt); }
+function showQuote(){
+  var d=QD, S=d.dept==='S';
+  var co = S ? 'شركة رواد المشاعر للأمن والسلامة' : 'شركة رواد المشاعر للمصاعد';
+  $('qp').className = S ? 'S' : '';
+  var h = '<div class="qh"><img src="'+(S?'logo-s.png':'logo-e.png')+'" alt=""><div><b>'+co+'</b><span>عرض سعر</span></div></div>'+
+    '<div class="qc"><div class="qt"><span class="tg">عرض سعر</span><span class="cd">'+esc(d.code)+'</span></div>'+
+      '<div class="qcl">'+esc(d.client)+'</div><div class="qloc">'+esc(d.location)+'</div>'+
+      '<div class="qtot"><small>الإجمالي شامل الضريبة</small><b>'+money(d.total)+'</b> <i>ريال</i></div>'+
+      '<div class="qmeta"><span>'+d.items+' بند</span><span>'+esc(d.date)+(d.dateH?' · '+esc(d.dateH)+' هـ':'')+'</span></div>'+
+      (d.expires && !d.approved && !d.expired ? '<div class="qmeta" style="justify-content:center;margin-top:2px">العرض ساري لحد <bdi dir="ltr">'+esc(d.expires)+'</bdi></div>' : '')+
+      '<a class="qb pdf" href="'+esc(d.url)+'">عرض الملف وتحميله (PDF)</a>';
+  if(d.approved) h += '<div class="qok"><b>✓ تمت الموافقة على العرض</b>'+(d.approvedAt?'بتاريخ <bdi dir="ltr">'+esc(d.approvedAt)+'</bdi><br>':'')+(d.done?'والأعمال اتنفذت — شكرًا لثقتكم':'فريقنا هيتواصل معاكم لتحديد موعد التنفيذ')+'</div>';
+  else if(d.expired) h += '<div class="qex">مدة العرض انتهت يوم <bdi dir="ltr">'+esc(d.expires)+'</bdi> — الأسعار ممكن تكون اتغيرت. كلّمنا ونحدّث لك العرض في نفس اليوم.</div>'+
+      '<a class="qb ok" href="'+waLink('السلام عليكم، محتاج تحديث عرض السعر رقم '+d.code+' — '+d.client)+'">اطلب تحديث العرض</a>';
+  else if(d.canApprove) h += '<button class="qb ok" onclick="askApprove()">✓ أوافق على العرض</button>';
+  h += '<a class="qb wa" href="'+waLink('السلام عليكم، عندي استفسار عن عرض السعر رقم '+d.code+' — '+d.client)+'">عندي استفسار — واتساب</a>'+
+       '<a class="qb tel" href="tel:'+esc(d.phone||EMERGENCY)+'">اتصال: '+esc(d.phone||EMERGENCY)+'</a></div>'+
+    '<div class="qft">'+co+' — مكة المكرمة</div>';
+  $('qpw').innerHTML = h;
+  $('splash').classList.add('hide'); $('qp').classList.remove('hide');
+}
+function askApprove(){
+  $('qsb').innerHTML = '<h3>الموافقة على عرض السعر</h3>'+
+    '<p>عرض رقم <b dir="ltr">'+esc(QD.code)+'</b><br>الإجمالي <b>'+money(QD.total)+'</b> ريال شامل الضريبة.<br>بالضغط على «موافق» بتأكد موافقتك على العرض وشروطه.</p>'+
+    '<input id="qName" placeholder="اسمك (اختياري)" maxlength="60">'+
+    '<button class="qb ok" id="qGo" onclick="doApprove()">موافق</button>'+
+    '<button class="qb no" onclick="qClose()">رجوع</button>';
+  $('qs').classList.remove('hide');
+}
+function qClose(){ $('qs').classList.add('hide'); }
+function doApprove(){
+  var b=$('qGo'); b.disabled=true; b.textContent='جاري التسجيل…';
+  var nm=($('qName').value||'').trim();
+  fetch(APP_URL + '?api=approve&code=' + encodeURIComponent(QPDF) + '&k=' + encodeURIComponent(QK) + '&name=' + encodeURIComponent(nm))
+    .then(function(r){ return r.json(); })
+    .then(function(d){
+      if(!d.ok){ $('qsb').innerHTML='<p style="color:#c0392b;font-weight:bold">'+esc(d.error||'حصلت مشكلة')+'</p><button class="qb no" onclick="qClose()">رجوع</button>'; return; }
+      QD=d; showQuote();
+      $('qsb').innerHTML='<div class="qdone"><div class="ck">✓</div><h3>شكرًا لك'+(nm?' يا '+esc(nm):'')+'</h3>'+
+        '<p>موافقتك على العرض اتسجلت، وفريقنا هيتواصل معاك لتحديد موعد التنفيذ.</p></div>'+
+        '<a class="qb wa" style="animation:none" href="'+waLink('السلام عليكم، وافقت على عرض السعر رقم '+d.code+' — '+d.client+(nm?' ('+nm+')':''))+'">ابلغنا على واتساب (اختياري)</a>'+
+        '<button class="qb no" onclick="qClose()">تمام</button>';
+    })
+    .catch(function(){ b.disabled=false; b.textContent='مفيش اتصال — اضغط تاني'; });
 }
 function pdfError(m, phone){
   $('splash').classList.add('hide');
